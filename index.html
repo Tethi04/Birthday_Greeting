@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffebf3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        #letter {
+            font-size: 100px;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+        }
+        
+        #birthday-message {
+            display: none;
+            font-size: 40px;
+            color: #d23369;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .message-word {
+            opacity: 0;
+            display: inline-block;
+            margin: 0 5px;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        #love-message {
+            display: none;
+            font-size: 30px;
+            color: #d23369;
+            font-weight: bold;
+            animation: fadeIn 1s;
+        }
+        
+        #replay-btn {
+            display: none;
+            padding: 10px 20px;
+            background-color: #ff6b9d;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: fadeIn 1s;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0;
+            animation: float 5s linear infinite;
+            z-index: 1;
+        }
+        
+        /* Cake Styles (candle removed) */
+        #cake {
+            display: none;
+            font-size: 150px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            animation: cakeBounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes cakeBounce {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="letter" onclick="showBirthdayMessage()">💌</div>
+        <div id="letter-text">Click to open the letter!</div>
+
+        <div id="cake">🎂</div> <!-- Candle removed -->
+
+        <div id="birthday-message"></div>
+        <div id="love-message">I Always Love You ❤️</div>
+        <button id="replay-btn" onclick="replay()">Replay</button>
+    </div>
+
+    <script>
+        const hearts = ['❤️', '💘', '💝', '💖', '💗', '💓', '💞', '💕', '💟', '♥️', '❣️'];
+        let heartsInterval;
+        const birthdayWords = ["HAPPY", "BIRTHDAY"];
+
+        function showBirthdayMessage() {
+            document.getElementById('letter').style.display = 'none';
+            document.getElementById('letter-text').style.display = 'none';
+            document.body.style.backgroundColor = '#fff5f7';
+
+            // Show cake first
+            showCake();
+        }
+
+        function showCake() {
+            const cake = document.getElementById('cake');
+            cake.style.display = 'block';
+            
+            // Start floating hearts
+            startHearts();
+            
+            // After 3 seconds, hide cake and show messages
+            setTimeout(() => {
+                cake.style.display = 'none';
+                showMessages();
+            }, 3000);
+        }
+
+        function showMessages() {
+            document.getElementById('birthday-message').style.display = 'block';
+            showWordsSequentially();
+        }
+
+        function showWordsSequentially() {
+            const messageElement = document.getElementById('birthday-message');
+            messageElement.innerHTML = '';
+
+            birthdayWords.forEach((word, index) => {
+                setTimeout(() => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'message-word';
+                    wordSpan.textContent = word;
+                    wordSpan.style.animationDelay = `${index * 0.3}s`;
+                    messageElement.appendChild(wordSpan);
+
+                    // After all words are shown, proceed to love message
+                    if (index === birthdayWords.length - 1) {
+                        setTimeout(() => {
+                            document.getElementById('birthday-message').style.opacity = '1';
+                            setTimeout(() => {
+                                document.getElementById('birthday-message').style.opacity = '0';
+                                setTimeout(() => {
+                                    document.getElementById('love-message').style.display = 'block';
+                                    setTimeout(() => {
+                                        document.getElementById('replay-btn').style.display = 'block';
+                                    }, 2000);
+                                }, 1000);
+                            }, 2000);
+                        }, index * 300 + 500);
+                    }
+                }, index * 500);
+            });
+        }
+
+        function startHearts() {
+            heartsInterval = setInterval(() => {
+                createHeart();
+            }, 300);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        function stopHearts() {
+            clearInterval(heartsInterval);
+            document.querySelectorAll('.heart').forEach(heart => heart.remove());
+        }
+
+        function replay() {
+            stopHearts();
+
+            // Reset all elements
+            document.getElementById('letter').style.display = 'block';
+            document.getElementById('letter-text').style.display = 'block';
+            document.getElementById('cake').style.display = 'none';
+            document.getElementById('birthday-message').style.display = 'none';
+            document.getElementById('birthday-message').innerHTML = '';
+            document.getElementById('love-message').style.display = 'none';
+            document.getElementById('replay-btn').style.display = 'none';
+
+            document.body.style.backgroundColor = '#ffebf3';
+        }
+    </script>
+</body>
+
+</html>
